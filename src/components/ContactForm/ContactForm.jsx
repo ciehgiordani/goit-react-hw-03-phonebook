@@ -1,21 +1,7 @@
 import { Component } from 'react';
 import { nanoid } from 'nanoid';
-import css from './ContactForm.module.css';
-import PropTypes from 'prop-types';
-import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
 export class ContactForm extends Component {
-  static propTypes = {
-    addContact: PropTypes.func.isRequired,
-    contacts: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.string.isRequired,
-        name: PropTypes.string.isRequired,
-        number: PropTypes.string.isRequired,
-      })
-    ),
-  };
-
   state = {
     name: '',
     number: '',
@@ -34,7 +20,7 @@ export class ContactForm extends Component {
   };
 
   handleSubmit = e => {
-    // prevent the form refreshing when submitting
+    // prevent the form from refreshing when submitted
     e.preventDefault();
     const { name, number } = this.state;
     const { addContact, contacts } = this.props;
@@ -48,13 +34,11 @@ export class ContactForm extends Component {
     const existingContact = contacts.find(
       contact => contact.name.toLowerCase() === name.toLowerCase()
     );
+
     if (existingContact) {
-       Notify.failure(`${name} is already in your contacts!`, { position: 'center-top' });  
-        return;
-      }
-       else {
-              Notify.success(`${name} is successfully added to your contacts!`, { position: 'center-top' });
-        }
+      alert(`${name} is already in contacts`);
+      return;
+    }
 
     // Add Contact
     addContact({
@@ -74,9 +58,9 @@ export class ContactForm extends Component {
     const { name, number } = this.state;
 
     return (
-      <form className={css.form} onSubmit={this.handleSubmit}>
-        <label className={css.formField}>
-          <p className={css.formLabel}>Name</p>
+      <form onSubmit={this.handleSubmit}>
+        <label>
+          <p>Name</p>
           <input
             type="text"
             name="name"
@@ -84,13 +68,14 @@ export class ContactForm extends Component {
             pattern="^[a-zA-Zа-яА-Я]+(([' \-][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
             title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan."
             required
+            //must have value prop when onChange prop is used
             value={name}
             onChange={this.handleNameChange}
           />
         </label>
 
-        <label className={css.formField}>
-          <p className={css.formLabel}>Number</p>
+        <label>
+          <p>Number</p>
           <input
             type="tel"
             name="number"
@@ -98,13 +83,13 @@ export class ContactForm extends Component {
             pattern="\+?\d{1,4}?[\-.\s]?\(?\d{1,3}?\)?[\-.\s]?\d{1,4}[\-.\s]?\d{1,4}[\-.\s]?\d{1,9}"
             title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
             required
+            //must have value prop when onChange prop is used
             value={number}
             onChange={this.handleNumberChange}
           />
         </label>
-        <button className={css.btnSubmit} type="submit">
-          Add Contact
-        </button>
+
+        <button type="submit">Add Contact</button>
       </form>
     );
   }
